@@ -63,19 +63,60 @@ pip install -r requirements.txt
 ```
 
 5. **Database Setup**
+The project uses SQLite database which will be created automatically when you run migrations. Follow these steps:
+
 ```bash
+# Create database tables
 python manage.py makemigrations
+
+# Apply migrations
 python manage.py migrate
+
+# Create admin superuser
+python manage.py createsuperuser
+# Follow prompts to create username and password
 ```
 
-6. **Create Admin User**
+The above commands will:
+- Create a new SQLite database file (db.sqlite3)
+- Set up all required database tables
+- Create necessary relationships between tables
+- Create an admin user for accessing the admin interface
+
+Important Database Models:
+- Users (Django's built-in user model)
+- JobSeeker (Profile information and resume storage)
+- Recruiter (Company information)
+- Job (Job listings)
+- JobApplication (Application tracking)
+
+6. **Media Files Setup**
+Create a directory for uploaded files:
 ```bash
-python manage.py createsuperuser
+# Windows
+mkdir media
+mkdir media\resumes
+
+# Unix/MacOS
+mkdir -p media/resumes
 ```
 
 7. **Run Server**
 ```bash
 python manage.py runserver
+```
+
+## Accessing the Application
+
+1. **Admin Interface**
+```
+URL: http://127.0.0.1:8000/admin
+Login with superuser credentials created during setup
+```
+
+2. **Main Application**
+```
+URL: http://127.0.0.1:8000
 ```
 
 ## Usage Guide
@@ -102,15 +143,63 @@ python manage.py runserver
   - django-crispy-forms
   - crispy-bootstrap4
 
-## Database Models
+## Database Schema
 
 ### User Models
-- JobSeeker (Profile, Resume, Skills)
-- Recruiter (Company Details)
+```python
+# JobSeeker Model
+- user (OneToOneField to User)
+- phone (CharField)
+- resume (FileField)
+- skills (TextField)
+- experience (IntegerField)
 
-### Core Models
-- Job (Listings)
-- JobApplication (Applications)
+# Recruiter Model
+- user (OneToOneField to User)
+- company_name (CharField)
+- company_description (TextField)
+
+# Job Model
+- title (CharField)
+- company (ForeignKey to Recruiter)
+- description (TextField)
+- requirements (TextField)
+- location (CharField)
+- salary (CharField)
+- status (CharField with choices)
+- created_at (DateTimeField)
+- updated_at (DateTimeField)
+
+# JobApplication Model
+- job (ForeignKey to Job)
+- applicant (ForeignKey to JobSeeker)
+- cover_letter (TextField)
+- status (CharField with choices)
+- applied_at (DateTimeField)
+- updated_at (DateTimeField)
+```
+
+## Troubleshooting
+
+1. **Database Issues**
+If you encounter database issues:
+```bash
+# Remove existing database
+rm db.sqlite3
+
+# Remove migration files
+rm -rf tasks/migrations/
+
+# Recreate database
+python manage.py makemigrations tasks
+python manage.py migrate
+```
+
+2. **Media Files**
+If uploaded files are not visible:
+- Ensure media directory exists
+- Check permissions on media directory
+- Verify MEDIA_URL and MEDIA_ROOT in settings.py
 
 ## Contributing
 1. Fork repository
