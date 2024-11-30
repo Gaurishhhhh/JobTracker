@@ -1,0 +1,5 @@
+Django==4.2.4
+django-crispy-forms==2.0
+crispy-bootstrap4==2022.1
+gunicorn==21.2.0
+whitenoise==6.5.0
