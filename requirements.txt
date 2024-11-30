@@ -1,6 +1,9 @@
 Django==3.2.25
 django-crispy-forms==2.0
 crispy-bootstrap4==2022.1
-Pillow==10.1.0  # For handling image/file uploads
-whitenoise==6.5.0  # For serving static files
-gunicorn==21.2.0  # For production deployment
+Pillow==9.5.0
+whitenoise==6.5.0
+gunicorn==21.2.0
+dj-database-url==2.1.0
+psycopg2-binary==2.9.9
+python-dotenv==1.0.0
