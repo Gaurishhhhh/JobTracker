@@ -1,0 +1,40 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Development
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+media/
+staticfiles/
+*.sqlite3
+
+# Docker
+Dockerfile
+Dockerfile.frontend
+docker-compose.yml
+
+# Terraform
+*.tf
+.terraform/
+
+# AWS
+scripts/
+appspec.yml
+
+# CI/CD
+.github/
