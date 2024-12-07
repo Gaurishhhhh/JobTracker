@@ -1,178 +1,138 @@
-# Job Portal Application - Docker Setup Guide
+# Job Portal
 
-## Prerequisites
+A Django-based job portal application with features for job seekers and recruiters.
 
-1. Install Docker Desktop for Windows
-2. Install Git
-3. Make sure ports 8000 and 3000 are available on your machine
+## Features
 
-## Step-by-Step Setup Guide
+- Job Seeker Features:
+  - Resume upload and management
+  - Job application with cover letters
+  - Profile management
+  
+- Recruiter Features:
+  - Post job listings
+  - Manage applications (Accept/Reject)
+  - Remove job postings
+  - View resumes and cover letters
 
-### 1. Configure Environment Variables
+## Deployment to AWS Elastic Beanstalk via Cloud9
 
-1. Open the `.env` file in the root directory
-2. Update the following variables with your values:
-```
-DJANGO_SECRET_KEY=your-secret-key-here
-DB_PASSWORD=your-secure-password
-AWS_ACCESS_KEY_ID=your-access-key
-AWS_SECRET_ACCESS_KEY=your-secret-key
-```
+1. Set up Cloud9 Environment:
+   ```bash
+   # Clone the repository
+   git clone https://github.com/ChethanNCI/JobTracker.git
+   cd JobTracker
 
-### 2. Build and Start the Application
+   # Create and activate virtual environment
+   python -m venv venv
+   source venv/bin/activate
 
-There are two ways to start the application:
+   # Install dependencies
+   pip install -r requirements.txt
+   ```
 
-#### Option 1: Using the start script (Recommended)
+2. Initialize Elastic Beanstalk:
+   ```bash
+   # Install EB CLI
+   pip install awsebcli
 
-```bash
-# Make scripts executable (if not already)
-chmod +x scripts/*.sh
+   # Initialize EB application
+   eb init -p python-3.11 jobportal
 
-# Start the application
-./scripts/start_containers.sh
-```
+   # Create environment
+   eb create jobportal-env
+   ```
 
-#### Option 2: Using Docker Compose directly
+3. Configure Environment Variables:
+   - Go to Elastic Beanstalk Console
+   - Navigate to Configuration
+   - Add environment variables:
+     - SECRET_KEY
+     - DEBUG
+     - ALLOWED_HOSTS
+     - DATABASE_URL (if using RDS)
 
-```bash
-# Build the images
-docker-compose build
+4. Deploy:
+   ```bash
+   eb deploy
+   ```
 
-# Start the containers
-docker-compose up -d
-```
+5. Open the application:
+   ```bash
+   eb open
+   ```
 
-### 3. Verify the Setup
+## Local Development
 
-1. Check if containers are running:
-```bash
-docker-compose ps
-```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ChethanNCI/JobTracker.git
+   cd JobTracker
+   ```
 
-2. Check container logs:
-```bash
-docker-compose logs
-```
+2. Create and activate virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+   ```
 
-3. Access the applications:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Admin Interface: http://localhost:8000/admin
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 4. Common Commands
+4. Run migrations:
+   ```bash
+   python manage.py migrate
+   ```
 
-```bash
-# Stop the application
-docker-compose down
+5. Create superuser:
+   ```bash
+   python manage.py createsuperuser
+   ```
 
-# View logs
-docker-compose logs -f
+6. Run development server:
+   ```bash
+   python manage.py runserver
+   ```
 
-# Rebuild and restart containers
-docker-compose up -d --build
+## Project Structure
 
-# Check container health
-docker-compose ps
+- `task_manager/` - Main project directory
+  - `settings.py` - Project settings
+  - `urls.py` - Main URL configuration
+  
+- `tasks/` - Main application directory
+  - `views.py` - Application views
+  - `models.py` - Database models
+  - `forms.py` - Forms
+  - `urls.py` - Application URLs
 
-# Access container shell
-docker-compose exec backend bash
-docker-compose exec frontend sh
-```
+- `templates/` - HTML templates
+- `static/` - Static files (CSS, JS, images)
+- `media/` - User uploaded files
+- `.ebextensions/` - Elastic Beanstalk configuration
 
-### 5. Troubleshooting
+## Contributing
 
-If you encounter issues:
+1. Create a feature branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
 
-1. Check the logs:
-```bash
-docker-compose logs
-```
+2. Make your changes and commit:
+   ```bash
+   git add .
+   git commit -m "Description of changes"
+   ```
 
-2. Verify environment variables:
-```bash
-./scripts/check_env.sh
-```
+3. Push to your branch:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
 
-3. Restart the containers:
-```bash
-docker-compose down
-./scripts/start_containers.sh
-```
+4. Create a Pull Request
 
-4. Clean up and rebuild:
-```bash
-# Stop and remove containers
-docker-compose down
+## License
 
-# Remove all images
-docker-compose down --rmi all
-
-# Remove volumes
-docker-compose down -v
-
-# Rebuild and start
-./scripts/start_containers.sh
-```
-
-## Directory Structure
-
-```
-.
-├── Dockerfile              # Backend Dockerfile
-├── Dockerfile.frontend     # Frontend Dockerfile
-├── docker-compose.yml      # Docker Compose configuration
-├── .env                    # Environment variables
-├── .dockerignore          # Docker ignore file
-└── scripts/
-    ├── check_env.sh       # Environment variables checker
-    └── start_containers.sh # Container startup script
-```
-
-## Health Checks
-
-- Backend health check: http://localhost:8000/health/
-- Frontend health check: http://localhost:3000/
-
-## Monitoring
-
-You can monitor the health of your containers using:
-
-```bash
-# View container status
-docker-compose ps
-
-# View container metrics
-docker stats
-```
-
-## Backup and Restore
-
-### Create a backup
-
-```bash
-# Backup the database
-docker-compose exec backend python manage.py dumpdata > backup.json
-```
-
-### Restore from backup
-
-```bash
-# Restore the database
-docker-compose exec backend python manage.py loaddata backup.json
-```
-
-## Security Notes
-
-1. Never commit the `.env` file to version control
-2. Regularly update your Docker images
-3. Use strong passwords in your environment variables
-4. Keep your Docker Engine and Docker Compose up to date
-
-## Next Steps
-
-After successfully running the application, you can:
-
-1. Set up CI/CD pipeline
-2. Configure AWS infrastructure
-3. Implement SonarQube for code quality analysis
+This project is licensed under the MIT License.
